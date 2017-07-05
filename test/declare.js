@@ -1,7 +1,12 @@
 var assert = require('assert');
-var declare = require('../dist/src/core/declare').declare;
+var declare = require('../index');
 
-describe('declare', function() {
+function it(title, cb) {
+    console.log(title);
+    cb();
+}
+
+//describe('declare', function() {
     var A = declare('A', null, {
         getDefaultConfig: function() {
             return {
@@ -37,6 +42,7 @@ describe('declare', function() {
     var C = declare('C', B, {
         getDefaultConfig: function() {
             return {
+                mix:1,
                 c: 'c'
             };
         },
@@ -53,6 +59,7 @@ describe('declare', function() {
     var D = declare('D', C, {
         getDefaultConfig: function() {
             return {
+                mix:2,
                 d: 'd'
             };
         },
@@ -109,9 +116,11 @@ describe('declare', function() {
         assert.equal(inst.test, 'D');
     });
 
-    var X = declare('X', [B, C, D], {
+    var X = declare('X', B, {
+        mixins: [C, D] ,
         getDefaultConfig: function() {
             return {
+                mix : 3,
                 x: 'x'
             };
         },
@@ -139,14 +148,13 @@ describe('declare', function() {
 
         assert.equal(X.superclass, B);
 
-        assert.equal(X._mixins.length, 2);
-
         var config = inst2.config;
         assert.equal(config.a, 'a');
         assert.equal(config.b, 'b');
         assert.equal(config.c, 'c');
         assert.equal(config.d, 'd');
         assert.equal(config.x, 'x');
+        assert.equal(config.mix, 3);
     });
 
 
@@ -161,4 +169,4 @@ describe('declare', function() {
         Y.create(1, 2, 3);
 
     });
-});
+//});
